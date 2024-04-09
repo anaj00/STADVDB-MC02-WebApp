@@ -25,7 +25,7 @@ const formData = ref({
 });
 
 const submitForm = () => {
-  const url = "http://localhost:5000/records";
+  const url = "http://localhost:3001/records";
   const options = {
     method: 'POST',
     headers: {
@@ -70,8 +70,41 @@ const submitForm = () => {
 };
 // [END] For adding a record
 
+// For editing a record
+const editItem = (item) => {
+  formData.value = { ...item };
+  dialog.value = true;
+};
+
+
+// [END] For editing a record
+
 
 // For deleting a record
+const deleteItem = (recordId) => {
+  if (!recordId) {
+    console.error('Invalid record ID');
+    return;
+  }
+
+  const url = `http://localhost:3001/records/${recordId}`;
+  const options = {
+    method: 'DELETE',
+  };
+
+  fetch(url, options)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Failed to delete record');
+      }
+      console.log('Record deleted successfully');
+      console.log('Record deleted successfully');
+      window.location.reload();
+    })
+    .catch(error => {
+      console.error('Error deleting record:', error);
+    });
+};
 // [END] For deleting a record
 
 
@@ -220,13 +253,13 @@ const submitForm = () => {
           <v-icon
             class="me-2"
             size="small"
-            @click="editItem(item)"
+            @click="editItem(item.pxid)"
           > 
             mdi-pencil
           </v-icon>
           <v-icon
             size="small"
-            @click="deleteItem(item)"
+            @click="deleteItem(item.pxid)"
           >
             mdi-delete
           </v-icon>
@@ -244,7 +277,7 @@ const submitForm = () => {
 // For getting all records
 const getRecords = {
   async fetch({ page, itemsPerPage, search }) {
-    const url = `http://localhost:5000/records?page=${page}&itemsPerPage=${itemsPerPage}&search=${search}`;
+    const url = `http://localhost:3001/records?page=${page}&itemsPerPage=${itemsPerPage}&search=${search}`;
 
     try {
       const response = await fetch(url);
