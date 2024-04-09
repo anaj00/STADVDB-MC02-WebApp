@@ -1,56 +1,8 @@
 <script setup>
 import { ref } from 'vue';
 
+// For adding a record
 const dialog = ref(false);
-const search = ref('');
-const itemsPerPage = 5;
-const currentPage = ref(1);
-
-const headers = [
-  { title: 'PXID', key: 'pxid' },
-  { title: 'Appt ID', key: 'apptid' },
-  { title: 'Status', key: 'status' },
-  { title: 'Time Queued', key: 'TimeQueued' },
-  { title: 'Queue Date', key: 'QueueDate' },
-  { title: 'Start Time', key: 'StartTime' },
-  { title: 'End Time', key: 'EndTime' },
-  { title: 'Type', key: 'type' },
-  { title: 'Virtual', key: 'isVirtual' },
-  { title: 'Hospital Name', key: 'hospitalname' },
-  { title: 'Is Hospital', key: 'IsHospital' },
-  { title: 'City', key: 'City' },
-  { title: 'Province', key: 'Province' },
-  { title: 'Region Name', key: 'RegionName' },
-  { title: 'Main Specialty', key: 'mainspecialty' },
-  { title: 'Age X', key: 'age_x' },
-  { title: 'Age Y', key: 'age_y' },
-  { title: 'Gender', key: 'gender' },
-  { title: 'Islands', key: 'islands' },
-  { title: 'Actions', key: 'actions', sortable: false }
-];
-
-const records = ref([]); // Store fetched records
-const totalItems = ref(0); // Total number of records
-const loading = ref(true); // Loading indicator
-
-const loadItems = () => {
-  const url = `http://localhost:5000/records?page=${currentPage.value}&itemsPerPage=${itemsPerPage}`;
-  fetch(url)
-    .then(response => response.json())
-    .then(data => {
-      records.value = data; // Update records
-      totalItems.value = data.total; // Update totalItems
-      loading.value = false; // Set loading indicator to false
-    })
-    .catch(error => {
-      console.error('Error fetching records:', error);
-      loading.value = false; // Set loading indicator to false even in case of error
-    });
-};
-
-
-// Call loadItems function initially
-loadItems();
 
 const formData = ref({
   pxid: '',
@@ -116,13 +68,13 @@ const submitForm = () => {
       console.log('Error submitting form:', error);
     });
 };
+// [END] For editing a record
+
 </script>
 
 <template>
-
   <body>
-    <v-card class="w-75 h-75 pa-4">
-
+    <v-card class="main-div pa-4">
       <template v-slot:text>
         <div class="d-flex justify-space-between align-center">
 
@@ -229,13 +181,14 @@ const submitForm = () => {
         fixed-header
         hover
         density="compact"
+        :height="700"
+        v-model:items-per-page="itemsPerPage"
         :headers="headers"
-        :items-per-page="itemsPerPage"
-        :total-items="totalItems"
-        :search="search"
-        :items="records"
+        :items="serverItems"
+        :items-length="totalItems"
         :loading="loading"
-        :height="550"
+        :search="search"
+        item-value="name"
         @update:options="loadItems"
       >
 
@@ -260,3 +213,75 @@ const submitForm = () => {
 
   </body>
 </template>
+
+<script>
+
+// For getting all records
+const getRecords = {
+  async fetch({ page, itemsPerPage }) {
+    const url = `http://localhost:5000/records?page=${page}&itemsPerPage=${itemsPerPage}`;
+
+    try {
+      const response = await fetch(url);
+      const data = await response.json();
+
+      console.log('Fetched data:', data);
+      return data;
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      throw new Error('Failed to fetch data');
+    }
+  },
+};
+
+export default {
+  data: () => ({
+    itemsPerPage: 7,
+    headers: [
+      { title: 'PXID', key: 'pxid' },
+      { title: 'Appt ID', key: 'apptid' },
+      { title: 'Status', key: 'status' },
+      { title: 'Time Queued', key: 'TimeQueued' },
+      { title: 'Queue Date', key: 'QueueDate' },
+      { title: 'Start Time', key: 'StartTime' },
+      { title: 'End Time', key: 'EndTime' },
+      { title: 'Type', key: 'type' },
+      { title: 'Virtual', key: 'isVirtual' },
+      { title: 'Hospital Name', key: 'hospitalname' },
+      { title: 'Is Hospital', key: 'IsHospital' },
+      { title: 'City', key: 'City' },
+      { title: 'Province', key: 'Province' },
+      { title: 'Region Name', key: 'RegionName' },
+      { title: 'Main Specialty', key: 'mainspecialty' },
+      { title: 'Age X', key: 'age_x' },
+      { title: 'Age Y', key: 'age_y' },
+      { title: 'Gender', key: 'gender' },
+      { title: 'Islands', key: 'islands' },
+      { title: 'Actions', key: 'actions', sortable: false }
+    ],
+    search: '',
+    serverItems: [],
+    loading: true,
+    totalItems: 0,
+  }),
+  methods: {
+    loadItems ({ page, itemsPerPage }) {
+      this.loading = true
+      getRecords.fetch({ page, itemsPerPage }).then(({ items, total }) => {
+        this.serverItems = items
+        this.totalItems = total
+        this.loading = false
+      })
+    },
+  },
+}
+// [END] For getting all records
+
+</script>
+
+<style scoped>
+  .main-div {
+    width: 90%; /* Custom width */
+    height: 90vh; /* Custom height */
+  }
+</style>
