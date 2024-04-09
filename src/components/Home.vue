@@ -68,7 +68,13 @@ const submitForm = () => {
       console.log('Error submitting form:', error);
     });
 };
-// [END] For editing a record
+// [END] For adding a record
+
+
+// For deleting a record
+// [END] For deleting a record
+
+
 
 </script>
 
@@ -95,7 +101,9 @@ const submitForm = () => {
               </v-btn>
             </template>
 
-            <v-card title="Add record">
+            <v-card 
+              title="Add record"
+              >
 
               <div class="ma-4">
                 <v-form>
@@ -227,6 +235,7 @@ const submitForm = () => {
 
     </v-card>
 
+    
   </body>
 </template>
 
