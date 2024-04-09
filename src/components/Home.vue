@@ -73,7 +73,48 @@ const formData = ref({
 });
 
 const submitForm = () => {
-  console.log(formData.value);
+  const url = "http://localhost:5000/records";
+  const options = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(formData.value)
+  }
+
+  fetch(url, options)
+    .then(response => {
+      if(!response.ok){
+        throw new Error('Internal server error');
+      }
+      return(response.json());
+    })
+    .then(data =>{
+      console.log('Form submitted successfully:', data);
+      // reset form values
+      formData.value = {
+        pxid: '',
+        apptid: '',
+        status: '',
+        TimeQueued: '',
+        QueueDate: '',
+        StartTime: '',
+        EndTime: '',
+        type: '',
+        isVirtual: '',
+        hospitalname: '',
+        IsHospital: '',
+        City: '',
+        Province: '',
+        RegionName: '',
+        mainspecialty: '',
+        age_x: '',
+        age_y: ''
+      };
+    })
+    .catch(error =>{
+      console.log('Error submitting form:', error);
+    });
 };
 </script>
 
@@ -108,64 +149,64 @@ const submitForm = () => {
               <div class="ma-4">
                 <v-form>
                   <!-- pxid -->
-                  <v-text-field label="pxid" required></v-text-field>
+                  <v-text-field v-model="formData.pxid" label="pxid" required></v-text-field>
 
                   <!-- apptid -->
-                  <v-text-field label="apptid" required></v-text-field>
+                  <v-text-field v-model="formData.apptid" label="apptid" required></v-text-field>
 
                   <!-- status -->
-                  <v-text-field label="status" required></v-text-field>
+                  <v-text-field v-model="formData.status" label="status" required></v-text-field>
 
                   <!-- TimeQueued -->
-                  <v-date-picker label="TimeQueued" required></v-date-picker>
+                  <v-text-field v-model="formData.TimeQueued" label="TimeQueued" required></v-text-field>
 
                   <!-- QueueDate -->
-                  <v-date-picker label="QueueDate" required></v-date-picker>
+                  <v-text-field v-model="formData.QueueDate" label="QueueDate" required></v-text-field>
 
                   <!-- StartTime -->
-                  <v-date-picker label="StartTime" required></v-date-picker>
+                  <v-text-field v-model="formData.StartTime" label="StartTime" required></v-text-field>
 
                   <!-- EndTime -->
-                  <v-date-picker label="EndTime"></v-date-picker>
+                  <v-text-field v-model="formData.EndTime" label="EndTime"></v-text-field>
 
                   <!-- type -->
-                  <v-text-field label="type" required></v-text-field>
+                  <v-text-field v-model="formData.type" label="type" required></v-text-field>
 
                   <!-- isVirtual -->
-                  <v-checkbox label="isVirtual"></v-checkbox>
+                  <v-checkbox v-model="formData.isVirtual" label="isVirtual"></v-checkbox>
 
                   <!-- hospitalname -->
-                  <v-text-field label="hospitalname" required></v-text-field>
+                  <v-text-field v-model="formData.hospitalname" label="hospitalname" required></v-text-field>
 
                   <!-- IsHospital -->
-                  <v-checkbox label="IsHospital"></v-checkbox>
+                  <v-checkbox v-model="formData.IsHospital" label="IsHospital"></v-checkbox>
 
                   <!-- City -->
-                  <v-text-field label="City" required></v-text-field>
+                  <v-text-field v-model="formData.City" label="City" required></v-text-field>
 
                   <!-- Province -->
-                  <v-text-field label="Province" required></v-text-field>
+                  <v-text-field v-model="formData.Province" label="Province" required></v-text-field>
 
                   <!-- RegionName -->
-                  <v-text-field label="RegionName" required></v-text-field>
+                  <v-text-field v-model="formData.RegionName" label="RegionName" required></v-text-field>
 
                   <!-- mainspecialty -->
-                  <v-text-field label="mainspecialty" required></v-text-field>
+                  <v-text-field v-model="formData.mainspecialty" label="mainspecialty" required></v-text-field>
 
                   <!-- age_x -->
-                  <v-text-field label="age_x" type="number" required></v-text-field>
+                  <v-text-field v-model="formData.age_x" label="age_x" type="number" required></v-text-field>
 
                   <!-- age_y -->
-                  <v-text-field label="age_y" type="number" required></v-text-field>
+                  <v-text-field v-model="formData.age_y" label="age_y" type="number" required></v-text-field>
 
                   <!-- gender -->
-                  <v-text-field label="gender" required></v-text-field>
+                  <v-text-field v-model="formData.gender" label="gender" required></v-text-field>
 
                   <!-- island -->
-                  <v-select label="island" :items="['Luzon', 'Visayas', 'Mindanao']" required></v-select>
+                  <v-select v-model="formData.island" label="island" :items="['Luzon', 'Visayas', 'Mindanao']" required></v-select>
 
                   <!-- Submit button -->
-                  <v-btn type="submit" color="primary">Submit</v-btn>
+                  <v-btn type="submit" color="primary" @click.prevent="submitForm">Submit</v-btn>
 
                 </v-form>
               </div>
@@ -203,7 +244,7 @@ const submitForm = () => {
             class="me-2"
             size="small"
             @click="editItem(item)"
-          >
+          > 
             mdi-pencil
           </v-icon>
           <v-icon
