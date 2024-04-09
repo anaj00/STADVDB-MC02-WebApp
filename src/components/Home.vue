@@ -78,9 +78,8 @@ const submitForm = () => {
       <template v-slot:text>
         <div class="d-flex justify-space-between align-center">
 
-          <div class="w-100 mr-6">
-            <v-text-field v-model="name" label="Search" prepend-inner-icon="mdi-magnify" variant="outlined" hide-details
-              single-line>
+          <div class="w-100 mr-6 ">
+            <v-text-field v-model="search" label="Search" prepend-inner-icon="mdi-magnify" variant="outlined" hide-details single-line>
             </v-text-field>
           </div>
 
@@ -178,6 +177,7 @@ const submitForm = () => {
       </template>
 
       <v-data-table-server
+        class="mt-4"
         fixed-header
         hover
         density="compact"
@@ -218,8 +218,8 @@ const submitForm = () => {
 
 // For getting all records
 const getRecords = {
-  async fetch({ page, itemsPerPage }) {
-    const url = `http://localhost:5000/records?page=${page}&itemsPerPage=${itemsPerPage}`;
+  async fetch({ page, itemsPerPage, search }) {
+    const url = `http://localhost:5000/records?page=${page}&itemsPerPage=${itemsPerPage}&search=${search}`;
 
     try {
       const response = await fetch(url);
@@ -238,6 +238,7 @@ export default {
   data: () => ({
     itemsPerPage: 7,
     headers: [
+      { title: 'Actions', key: 'actions', sortable: false },
       { title: 'PXID', key: 'pxid' },
       { title: 'Appt ID', key: 'apptid' },
       { title: 'Status', key: 'status' },
@@ -257,21 +258,22 @@ export default {
       { title: 'Age Y', key: 'age_y' },
       { title: 'Gender', key: 'gender' },
       { title: 'Islands', key: 'islands' },
-      { title: 'Actions', key: 'actions', sortable: false }
     ],
     search: '',
     serverItems: [],
     loading: true,
     totalItems: 0,
+    search: '',
   }),
+  
   methods: {
-    loadItems ({ page, itemsPerPage }) {
-      this.loading = true
-      getRecords.fetch({ page, itemsPerPage }).then(({ items, total }) => {
-        this.serverItems = items
-        this.totalItems = total
-        this.loading = false
-      })
+    loadItems({ page, itemsPerPage }) {
+      this.loading = true;
+      getRecords.fetch({ page, itemsPerPage, search: this.search }).then(({ items, total }) => {
+        this.serverItems = items;
+        this.totalItems = total;
+        this.loading = false;
+      });
     },
   },
 }
