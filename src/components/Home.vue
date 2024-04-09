@@ -70,12 +70,61 @@ const submitForm = () => {
 };
 // [END] For adding a record
 
+
 // For editing a record
-const editItem = (item) => {
-  formData.value = { ...item };
-  dialog.value = true;
+// For editing a record
+const editdialog = ref(false);
+
+// Store the ID of the edited record
+let editedRecordId = null;
+
+const editItem = async (recordId) => {
+  try {
+    const url = `http://localhost:3001/records/${recordId}`;
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error('Failed to fetch record');
+    }
+    const record = await response.json();
+
+    // Prefill formData with record data
+    formData.value = { ...record };
+
+    // Store the ID of the edited record
+    editedRecordId = recordId;
+
+    // Open the edit dialog
+    editdialog.value = true;
+  } catch (error) {
+    console.error('Error fetching record:', error);
+  }
 };
 
+// Save edited data
+const saveEditedData = async () => {
+  try {
+    const url = `http://localhost:3001/records/${editedRecordId}`;
+    const options = {
+      method: 'PUT', 
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(formData.value)
+    };
+
+    const response = await fetch(url, options);
+    if (!response.ok) {
+      throw new Error('Failed to save edited data');
+    }
+
+    console.log('Record updated successfully');
+
+    // Close the edit dialog after saving
+    editdialog.value = false;
+  } catch (error) {
+    console.error('Error saving edited data:', error);
+  }
+};
 
 // [END] For editing a record
 
@@ -251,24 +300,118 @@ const deleteItem = (recordId) => {
 
         <template v-slot:item.actions="{ item }">
           <v-icon
-            class="me-2"
             size="small"
-            @click="editItem(item.pxid)"
-          > 
+            @click="editItem(item.apptid)"
+          >
             mdi-pencil
           </v-icon>
+          
           <v-icon
             size="small"
-            @click="deleteItem(item.pxid)"
+            @click="deleteItem(item.apptid)"
           >
             mdi-delete
           </v-icon>
+
         </template>
       </v-data-table-server>
-
     </v-card>
 
-    
+  
+   <!-- Edit Dialog --> 
+   <v-dialog v-model="editdialog" max-width="600">
+      <v-card title="Edit record">
+      <div class="ma-4">
+        <v-form>
+          <!-- pxid -->
+          <v-text-field v-model="formData.pxid" label="Patient ID" required></v-text-field>
+
+          <!-- apptid -->
+          <v-text-field v-model="formData.apptid" label="Appointment ID" required></v-text-field>
+
+          <!-- status -->
+          <v-select v-model="formData.status" label="Status" :items="['Completed', 'Queued', 'NoShow', 'Serving', 'Cancel', 'Skip', 'Admitted']" required></v-select>
+
+          <!-- TimeQueued -->
+          <v-text-field v-model="formData.TimeQueued" label="Time Queued" type='time' required></v-text-field>
+
+          <!-- QueueDate -->
+          <v-text-field v-model="formData.QueueDate" label="Queue Date" type='date' required></v-text-field>
+
+          <!-- StartTime -->
+          <v-text-field v-model="formData.StartTime" label="Start Time" type='time' required></v-text-field>
+
+          <!-- EndTime -->
+          <v-text-field v-model="formData.EndTime" type='time' label="EndTime"></v-text-field>
+
+          <!-- type -->
+          <v-text-field v-model="formData.type" label="type" required></v-text-field>
+
+          <!-- isVirtual -->
+          <v-checkbox v-model="formData.isVirtual" label="isVirtual"></v-checkbox>
+
+          <!-- hospitalname -->
+          <v-text-field v-model="formData.hospitalname" label="hospitalname" required></v-text-field>
+
+          <!-- IsHospital -->
+          <v-checkbox v-model="formData.IsHospital" label="IsHospital"></v-checkbox>
+
+          <!-- City -->
+          <v-text-field v-model="formData.City" label="City" required></v-text-field>
+
+          <!-- Province -->
+          <v-text-field v-model="formData.Province" label="Province" required></v-text-field>
+
+          <!-- RegionName -->
+          <v-select 
+            v-model="formData.RegionName" 
+            label="RegionName" 
+            :items="[ 'National Capital Region (NCR) - Metro Manila',
+                      'Ilocos Region (Region I)',
+                      'Cagayan Valley (Region II)',
+                      'Central Luzon (Region III)',
+                      'CALABARZON (Region IV-A)',
+                      'MIMAROPA (Region IV-B)',
+                      'Bicol Region (Region V)',
+                      'Western Visayas (Region VI)',
+                      'Central Visayas (Region VII)',
+                      'Eastern Visayas (Region VIII)',
+                      'Zamboanga Peninsula (Region IX)',
+                      'Northern Mindanao (Region X)',
+                      'Davao Region (Region XI)',
+                      'SOCCSKSARGEN (Region XII)',
+                      'Caraga (Region XIII)',
+                      'Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)']" 
+            required></v-select>
+
+          <!-- mainspecialty -->
+          <v-text-field v-model="formData.mainspecialty" label="mainspecialty" required></v-text-field>
+
+          <!-- age_x -->
+          <v-text-field v-model="formData.age_x" label="age_x" type="number" required></v-text-field>
+
+          <!-- age_y -->
+          <v-text-field v-model="formData.age_y" label="age_y" type="number" required></v-text-field>
+
+          <!-- gender -->
+          <v-text-field v-model="formData.gender" label="gender" required></v-text-field>
+
+          <!-- island -->
+          <v-select v-model="formData.island" label="island" :items="['Luzon', 'Visayas', 'Mindanao']" required></v-select>
+
+        </v-form>
+      </div>
+
+
+      <v-card-actions>
+        <v-spacer></v-spacer>
+
+        <v-btn text="Close" variant="plain" @click="editdialog = false"></v-btn>
+
+        <v-btn color="primary" text="Update" variant="tonal" @click="saveEditedData"></v-btn>
+      </v-card-actions>
+      </v-card>
+    </v-dialog>
   </body>
 </template>
 
