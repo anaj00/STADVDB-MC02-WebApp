@@ -100,25 +100,25 @@ const submitForm = () => {
               <div class="ma-4">
                 <v-form>
                   <!-- pxid -->
-                  <v-text-field v-model="formData.pxid" label="pxid" required></v-text-field>
+                  <v-text-field v-model="formData.pxid" label="Patient ID" required></v-text-field>
 
                   <!-- apptid -->
-                  <v-text-field v-model="formData.apptid" label="apptid" required></v-text-field>
+                  <v-text-field v-model="formData.apptid" label="Appointment ID" required></v-text-field>
 
                   <!-- status -->
-                  <v-text-field v-model="formData.status" label="status" required></v-text-field>
+                  <v-select v-model="formData.status" label="Status" :items="['Completed', 'Queued', 'NoShow', 'Serving', 'Cancel', 'Skip', 'Admitted']" required></v-select>
 
                   <!-- TimeQueued -->
-                  <v-text-field v-model="formData.TimeQueued" label="TimeQueued" required></v-text-field>
+                  <v-text-field v-model="formData.TimeQueued" label="Time Queued" type='time' required></v-text-field>
 
                   <!-- QueueDate -->
-                  <v-text-field v-model="formData.QueueDate" label="QueueDate" required></v-text-field>
+                  <v-text-field v-model="formData.QueueDate" label="Queue Date" type='date' required></v-text-field>
 
                   <!-- StartTime -->
-                  <v-text-field v-model="formData.StartTime" label="StartTime" required></v-text-field>
+                  <v-text-field v-model="formData.StartTime" label="Start Time" type='time' required></v-text-field>
 
                   <!-- EndTime -->
-                  <v-text-field v-model="formData.EndTime" label="EndTime"></v-text-field>
+                  <v-text-field v-model="formData.EndTime" type='time' label="EndTime"></v-text-field>
 
                   <!-- type -->
                   <v-text-field v-model="formData.type" label="type" required></v-text-field>
@@ -139,7 +139,26 @@ const submitForm = () => {
                   <v-text-field v-model="formData.Province" label="Province" required></v-text-field>
 
                   <!-- RegionName -->
-                  <v-text-field v-model="formData.RegionName" label="RegionName" required></v-text-field>
+                  <v-select 
+                    v-model="formData.RegionName" 
+                    label="RegionName" 
+                    :items="[ 'National Capital Region (NCR) - Metro Manila',
+                              'Ilocos Region (Region I)',
+                              'Cagayan Valley (Region II)',
+                              'Central Luzon (Region III)',
+                              'CALABARZON (Region IV-A)',
+                              'MIMAROPA (Region IV-B)',
+                              'Bicol Region (Region V)',
+                              'Western Visayas (Region VI)',
+                              'Central Visayas (Region VII)',
+                              'Eastern Visayas (Region VIII)',
+                              'Zamboanga Peninsula (Region IX)',
+                              'Northern Mindanao (Region X)',
+                              'Davao Region (Region XI)',
+                              'SOCCSKSARGEN (Region XII)',
+                              'Caraga (Region XIII)',
+                              'Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)']" 
+                    required></v-select>
 
                   <!-- mainspecialty -->
                   <v-text-field v-model="formData.mainspecialty" label="mainspecialty" required></v-text-field>
@@ -155,9 +174,6 @@ const submitForm = () => {
 
                   <!-- island -->
                   <v-select v-model="formData.island" label="island" :items="['Luzon', 'Visayas', 'Mindanao']" required></v-select>
-
-                  <!-- Submit button -->
-                  <v-btn type="submit" color="primary" @click.prevent="submitForm">Submit</v-btn>
 
                 </v-form>
               </div>
