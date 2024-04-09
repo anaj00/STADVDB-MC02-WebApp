@@ -2,6 +2,54 @@
 import { ref } from 'vue';
 
 const dialog = ref(false);
+const search = ref('');
+const itemsPerPage = 5;
+const currentPage = ref(1);
+
+const headers = [
+  { title: 'PXID', key: 'pxid' },
+  { title: 'Appt ID', key: 'apptid' },
+  { title: 'Status', key: 'status' },
+  { title: 'Time Queued', key: 'TimeQueued' },
+  { title: 'Queue Date', key: 'QueueDate' },
+  { title: 'Start Time', key: 'StartTime' },
+  { title: 'End Time', key: 'EndTime' },
+  { title: 'Type', key: 'type' },
+  { title: 'Virtual', key: 'isVirtual' },
+  { title: 'Hospital Name', key: 'hospitalname' },
+  { title: 'Is Hospital', key: 'IsHospital' },
+  { title: 'City', key: 'City' },
+  { title: 'Province', key: 'Province' },
+  { title: 'Region Name', key: 'RegionName' },
+  { title: 'Main Specialty', key: 'mainspecialty' },
+  { title: 'Age X', key: 'age_x' },
+  { title: 'Age Y', key: 'age_y' },
+  { title: 'Gender', key: 'gender' },
+  { title: 'Islands', key: 'islands' }
+];
+
+const records = ref([]); // Store fetched records
+const totalItems = ref(0); // Total number of records
+const loading = ref(true); // Loading indicator
+
+const loadItems = () => {
+  const url = `http://localhost:5000/records?page=${currentPage.value}&itemsPerPage=${itemsPerPage}`;
+  fetch(url)
+    .then(response => response.json())
+    .then(data => {
+      records.value = data; // Update records
+      totalItems.value = data.total; // Update totalItems
+      loading.value = false; // Set loading indicator to false
+    })
+    .catch(error => {
+      console.error('Error fetching records:', error);
+      loading.value = false; // Set loading indicator to false even in case of error
+    });
+};
+
+
+// Call loadItems function initially
+loadItems();
 
 const formData = ref({
   pxid: '',
@@ -26,7 +74,6 @@ const formData = ref({
 const submitForm = () => {
   console.log(formData.value);
 };
-
 </script>
 
 <template>
@@ -136,12 +183,16 @@ const submitForm = () => {
         </div>
       </template>
 
-      <v-data-table-server v-model:items-per-page="itemsPerPage" :headers="headers" :items="serverItems"
-        :items-length="totalItems" :loading="loading" :search="search" item-value="name" @update:options="loadItems">
-
-
-
-      </v-data-table-server>
+      <v-data-table-server
+        :headers="headers"
+        :items-per-page="itemsPerPage"
+        :total-items="totalItems"
+        :search="search"
+        :items="records"
+        :loading="loading"
+        :height="550"
+        @update:options="loadItems"
+      ></v-data-table-server>
 
     </v-card>
 
