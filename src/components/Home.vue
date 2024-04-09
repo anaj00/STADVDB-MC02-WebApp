@@ -25,7 +25,8 @@ const headers = [
   { title: 'Age X', key: 'age_x' },
   { title: 'Age Y', key: 'age_y' },
   { title: 'Gender', key: 'gender' },
-  { title: 'Islands', key: 'islands' }
+  { title: 'Islands', key: 'islands' },
+  { title: 'Actions', key: 'actions', sortable: false }
 ];
 
 const records = ref([]); // Store fetched records
@@ -184,6 +185,9 @@ const submitForm = () => {
       </template>
 
       <v-data-table-server
+        fixed-header
+        hover
+        density="compact"
         :headers="headers"
         :items-per-page="itemsPerPage"
         :total-items="totalItems"
@@ -192,7 +196,24 @@ const submitForm = () => {
         :loading="loading"
         :height="550"
         @update:options="loadItems"
-      ></v-data-table-server>
+      >
+
+        <template v-slot:item.actions="{ item }">
+          <v-icon
+            class="me-2"
+            size="small"
+            @click="editItem(item)"
+          >
+            mdi-pencil
+          </v-icon>
+          <v-icon
+            size="small"
+            @click="deleteItem(item)"
+          >
+            mdi-delete
+          </v-icon>
+        </template>
+      </v-data-table-server>
 
     </v-card>
 
