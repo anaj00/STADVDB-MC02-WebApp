@@ -118,6 +118,7 @@ const saveEditedData = async () => {
     }
 
     console.log('Record updated successfully');
+    window.location.reload();
 
     // Close the edit dialog after saving
     editdialog.value = false;
@@ -146,7 +147,6 @@ const deleteItem = (recordId) => {
       if (!response.ok) {
         throw new Error('Failed to delete record');
       }
-      console.log('Record deleted successfully');
       console.log('Record deleted successfully');
       window.location.reload();
     })
