@@ -157,7 +157,27 @@ const deleteItem = (recordId) => {
 // [END] For deleting a record
 
 
-
+// For generate report
+const generateReport = async () => {
+  try {
+    const response = await fetch('http://localhost:3001/generatetxt');
+    if (!response.ok) {
+      throw new Error('Failed to generate TXT');
+    }
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+    
+    // Set href attribute of the anchor element
+    const txtDownloadLink = document.createElement('a');
+    txtDownloadLink.href = url;
+    txtDownloadLink.download = 'yearly_analysis.txt';
+    document.body.appendChild(txtDownloadLink);
+    txtDownloadLink.click();
+    document.body.removeChild(txtDownloadLink);
+  } catch (error) {
+    console.error('Error generating report:', error);
+  }
+};
 </script>
 
 <template>
@@ -171,7 +191,7 @@ const deleteItem = (recordId) => {
             </v-text-field>
           </div>
 
-          <v-btn class="text-white font-weight-bold text-capitalize mr-3" color="var(--vt-c-primary)" height="50">
+          <v-btn class="text-white font-weight-bold text-capitalize mr-3" color="var(--vt-c-primary)" height="50" @click="generateReport">
             Generate Report
           </v-btn>
 
