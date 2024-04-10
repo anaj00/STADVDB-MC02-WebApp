@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue';
 
-const baseUrl = 'http://localhost:3001';
+const baseUrl = "http://localhost:3001";
 
 // For adding a record
 const dialog = ref(false);
@@ -30,7 +30,7 @@ const submitForm = () => {
   formData.value.isVirtual = formData.value.isVirtual === 'true' ? 1 : 0;
   formData.value.IsHospital = formData.value.isVirtual === 'true' ? 1 : 0;
 
-  const url = "http://localhost:3001/records";
+  const url = baseUrl+"/records";
   console.log(formData.value)
   const options = {
     method: 'POST',
@@ -109,7 +109,7 @@ const editItem = async (recordId) => {
 // Save edited data
 const saveEditedData = async () => {
   try {
-    const url = `${baseUrl}/records/${editedRecordId}`;
+  const url = `${baseUrl}/records/${editedRecordId}`;
     const options = {
       method: 'PUT', 
       headers: {
@@ -166,7 +166,7 @@ const deleteItem = (recordId) => {
 // For generate report
 const generateReport = async () => {
   try {
-    const response = await fetch('${baseUrl}:3001/generatetxt');
+    const response = await fetch(`${baseUrl}/generatetxt`);
     if (!response.ok) {
       throw new Error('Failed to generate TXT');
     }
@@ -451,7 +451,7 @@ const baseUrl = 'http://localhost:3001';
 // For getting all records
 const getRecords = {
   async fetch({ page, itemsPerPage, search }) {
-    const url = `${baseUrl}/records?page=${page}&itemsPerPage=${itemsPerPage}&search=${search}`;
+  const url = `${baseUrl}/records?page=${page}&itemsPerPage=${itemsPerPage}&search=${search}`;
 
     try {
       const response = await fetch(url);
