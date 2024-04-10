@@ -1,6 +1,8 @@
 <script setup>
 import { ref } from 'vue';
 
+const baseUrl = 'http://localhost:3001';
+
 // For adding a record
 const dialog = ref(false);
 
@@ -13,9 +15,9 @@ const formData = ref({
   StartTime: '',
   EndTime: '',
   type: '',
-  isVirtual: '',
+  isVirtual: 'false',
   hospitalname: '',
-  IsHospital: '',
+  IsHospital: 'false',
   City: '',
   Province: '',
   RegionName: '',
@@ -25,7 +27,11 @@ const formData = ref({
 });
 
 const submitForm = () => {
+  formData.value.isVirtual = formData.value.isVirtual === 'true' ? 1 : 0;
+  formData.value.IsHospital = formData.value.isVirtual === 'true' ? 1 : 0;
+
   const url = "http://localhost:3001/records";
+  console.log(formData.value)
   const options = {
     method: 'POST',
     headers: {
@@ -53,9 +59,9 @@ const submitForm = () => {
         StartTime: '',
         EndTime: '',
         type: '',
-        isVirtual: '',
+        isVirtual: 'false',
         hospitalname: '',
-        IsHospital: '',
+        IsHospital: 'false',
         City: '',
         Province: '',
         RegionName: '',
@@ -80,7 +86,7 @@ let editedRecordId = null;
 
 const editItem = async (recordId) => {
   try {
-    const url = `http://localhost:3001/records/${recordId}`;
+    const url = `${baseUrl}/records/${recordId}`;
     const response = await fetch(url);
     if (!response.ok) {
       throw new Error('Failed to fetch record');
@@ -103,7 +109,7 @@ const editItem = async (recordId) => {
 // Save edited data
 const saveEditedData = async () => {
   try {
-    const url = `http://localhost:3001/records/${editedRecordId}`;
+    const url = `${baseUrl}/records/${editedRecordId}`;
     const options = {
       method: 'PUT', 
       headers: {
@@ -137,7 +143,7 @@ const deleteItem = (recordId) => {
     return;
   }
 
-  const url = `http://localhost:3001/records/${recordId}`;
+  const url = `${baseUrl}/records/${recordId}`;
   const options = {
     method: 'DELETE',
   };
@@ -160,7 +166,7 @@ const deleteItem = (recordId) => {
 // For generate report
 const generateReport = async () => {
   try {
-    const response = await fetch('http://localhost:3001/generatetxt');
+    const response = await fetch('${baseUrl}:3001/generatetxt');
     if (!response.ok) {
       throw new Error('Failed to generate TXT');
     }
@@ -219,16 +225,16 @@ const generateReport = async () => {
                   <v-select v-model="formData.status" label="Status" :items="['Completed', 'Queued', 'NoShow', 'Serving', 'Cancel', 'Skip', 'Admitted']" required></v-select>
 
                   <!-- TimeQueued -->
-                  <v-text-field v-model="formData.TimeQueued" label="Time Queued" type='time' required></v-text-field>
+                  <v-text-field v-model="formData.TimeQueued" label="Time Queued" required></v-text-field>
 
                   <!-- QueueDate -->
-                  <v-text-field v-model="formData.QueueDate" label="Queue Date" type='date' required></v-text-field>
+                  <v-text-field v-model="formData.QueueDate" label="Queue Date" required></v-text-field>
 
                   <!-- StartTime -->
-                  <v-text-field v-model="formData.StartTime" label="Start Time" type='time' required></v-text-field>
+                  <v-text-field v-model="formData.StartTime" label="Start Time" required></v-text-field>
 
                   <!-- EndTime -->
-                  <v-text-field v-model="formData.EndTime" type='time' label="EndTime"></v-text-field>
+                  <v-text-field v-model="formData.EndTime" label="EndTime"></v-text-field>
 
                   <!-- type -->
                   <v-text-field v-model="formData.type" label="type" required></v-text-field>
@@ -285,6 +291,8 @@ const generateReport = async () => {
                   <!-- island -->
                   <v-select v-model="formData.island" label="island" :items="['Luzon', 'Visayas', 'Mindanao']" required></v-select>
 
+                  <!-- Submit button -->
+                  <v-btn type="submit" color="primary" @click.prevent="submitForm">Submit</v-btn>
                 </v-form>
               </div>
 
@@ -419,6 +427,8 @@ const generateReport = async () => {
           <!-- island -->
           <v-select v-model="formData.island" label="island" :items="['Luzon', 'Visayas', 'Mindanao']" required></v-select>
 
+          <!-- Submit button -->
+          <v-btn type="submit" color="primary" @click.prevent="submitForm">Submit</v-btn>
         </v-form>
       </div>
 
@@ -428,7 +438,7 @@ const generateReport = async () => {
 
         <v-btn text="Close" variant="plain" @click="editdialog = false"></v-btn>
 
-        <v-btn color="primary" text="Update" variant="tonal" @click="saveEditedData"></v-btn>
+        <v-btn color="primary" text="Update" variant="tonal" @click="submitForm"></v-btn>
       </v-card-actions>
       </v-card>
     </v-dialog>
@@ -436,11 +446,12 @@ const generateReport = async () => {
 </template>
 
 <script>
+const baseUrl = 'http://localhost:3001';
 
 // For getting all records
 const getRecords = {
   async fetch({ page, itemsPerPage, search }) {
-    const url = `http://localhost:3001/records?page=${page}&itemsPerPage=${itemsPerPage}&search=${search}`;
+    const url = `${baseUrl}/records?page=${page}&itemsPerPage=${itemsPerPage}&search=${search}`;
 
     try {
       const response = await fetch(url);
