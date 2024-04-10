@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue';
 
-const baseUrl = "http://localhost:3001";
+const baseUrl = 'https://stadvdb-mc02-backend.onrender.com';
 
 // For adding a record
 const dialog = ref(false);
@@ -225,16 +225,16 @@ const generateReport = async () => {
                   <v-select v-model="formData.status" label="Status" :items="['Completed', 'Queued', 'NoShow', 'Serving', 'Cancel', 'Skip', 'Admitted']" required></v-select>
 
                   <!-- TimeQueued -->
-                  <v-text-field v-model="formData.TimeQueued" label="Time Queued" required></v-text-field>
+                  <v-text-field v-model="formData.TimeQueued" label="Time Queued" type='time' required></v-text-field>
 
                   <!-- QueueDate -->
-                  <v-text-field v-model="formData.QueueDate" label="Queue Date" required></v-text-field>
+                  <v-text-field v-model="formData.QueueDate" label="Queue Date" type='date' required></v-text-field>
 
                   <!-- StartTime -->
-                  <v-text-field v-model="formData.StartTime" label="Start Time" required></v-text-field>
+                  <v-text-field v-model="formData.StartTime" label="Start Time" type='time' required></v-text-field>
 
                   <!-- EndTime -->
-                  <v-text-field v-model="formData.EndTime" label="EndTime"></v-text-field>
+                  <v-text-field v-model="formData.EndTime" type='time' label="EndTime"></v-text-field>
 
                   <!-- type -->
                   <v-text-field v-model="formData.type" label="type" required></v-text-field>
@@ -446,13 +446,13 @@ const generateReport = async () => {
 </template>
 
 <script>
-const baseUrl = 'http://localhost:3001';
+const baseUrl = 'https://stadvdb-mc02-backend.onrender.com';
 
 // For getting all records
 const getRecords = {
   async fetch({ page, itemsPerPage, search }) {
   const url = `${baseUrl}/records?page=${page}&itemsPerPage=${itemsPerPage}&search=${search}`;
-
+  console.log(url)
     try {
       const response = await fetch(url);
       const data = await response.json();
